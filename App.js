@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Chart from './src/components/Chart';
+import HeartList from './src/components/HeartList';
+import Inform from './src/components/Inform';
+//import Buttons from './src/components/Buttons';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+const Stack = createStackNavigator();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const App = () => {
+    const [favorites, setFavorites] = useState([]);
+
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Chart">
+                <Stack.Screen
+                    name="Chart"
+                    component={Chart}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="HeartList"
+                    component={HeartList}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Inform"
+                    component={Inform}
+                    options={{ headerShown: false }}
+                />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
+
+export default App;
