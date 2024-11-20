@@ -45,7 +45,6 @@ const Inform = ({ navigation, route }) => {
                 </View>
             </TouchableOpacity>
 
-            {/* Inform 페이지에서도 5개의 버튼을 추가 */}
             <Buttons navigation={navigation} favorites={favorites} />
         </View>
     );
@@ -62,14 +61,16 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: 'bold',
+        marginTop: 20,
         marginBottom: 30,
         color: '#000',
+        textAlign: 'center',
     },
     inputContainer: {
         marginBottom: 30,
     },
     pinkBox: {
-        backgroundColor: '#FFC0CB', // 핑크색 박스
+        backgroundColor: '#ffe6f2',
         marginBottom: 15,
         padding: 10,
         borderRadius: 8,

@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginTop : 20,
+        marginTop: 20,
         marginBottom: 30,
         textAlign: 'center',  // 텍스트를 중앙에 정렬
         flex: 1,  // 제목이 남은 공간을 차지하도록 설정

@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\assets",
     "\\src",
     "\\src\\components"
   ],
-  "SelectedNode": "\\src",
+  "SelectedNode": "\\src\\components\\Write.js",
   "PreviewInSolutionExplorer": false
 }
