@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet, Alert, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { database, ref, push, set } from '../../firebaseConfig';
 
 const { width } = Dimensions.get('window');
 
@@ -38,21 +39,35 @@ export default function Write() {
     };
 
     // 실제 저장 버튼 처리
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (title.trim() !== '' && content.trim() !== '') {
-            if (imageURI) {
-                Alert.alert('SAVE', '작성한 일기가 저장되었습니다.');
-            } else {
-                Alert.alert('SAVE', '작성한 일기가 저장되었습니다. 이미지 없이 저장되었습니다.');
-            }
+          try {
+            // Firebase 데이터베이스 참조 생성
+            const postRef = ref(database, 'posts'); // 'posts'는 저장될 위치
+            const newPostRef = push(postRef); // 새 데이터 노드 생성
+    
+            // 데이터 저장
+            await set(newPostRef, {
+              title,
+              content,
+              tag: tag1,
+              date: new Date().toISOString(), // ISO 형식으로 날짜 저장
+              image: imageURI || null, // 이미지 URI
+            });
+    
+            Alert.alert('성공', '작성한 일기가 Firebase에 저장되었습니다.');
             setTitle('');
             setContent('');
             setTag1('');
             setImageURI(null);
+          } catch (error) {
+            console.error('Firebase 저장 오류:', error);
+            Alert.alert('오류', '데이터 저장 중 오류가 발생했습니다.');
+          }
         } else {
-            Alert.alert('입력 오류', '제목과 내용은 필수 입력 항목입니다.');
+          Alert.alert('입력 오류', '제목과 내용은 필수 입력 항목입니다.');
         }
-    };
+      };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
