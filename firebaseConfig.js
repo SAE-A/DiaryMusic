@@ -3,9 +3,9 @@ import { getDatabase, ref, push, set } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyCNZwVUDtrgYzAGboKbA47EeYFPAKGhw5I",
   authDomain: "diarymusic-ab59a.firebaseapp.com",
-  databaseURL: "",
+  databaseURL: "https://diarymusic-ab59a-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "diarymusic-ab59a",
   storageBucket: "diarymusic-ab59a.firebasestorage.app",
   messagingSenderId: "749717686670",
