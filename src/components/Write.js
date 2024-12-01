@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert, Dimensions, Keyboard, TouchableWithoutFeedback, ScrollView, FlatList } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -18,21 +17,10 @@ const SPOTIFY_CID = '74ef5f7562264b57bc41e40af0ebcf9d'; // 보안상 환경변�
 const SPOTIFY_SECRET = 'e77235d7c8304d0588110c4bd57c70df'; // 보안상 환경변수 사용 권장
 
 function Write({ navigation, route }) {
-=======
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet, Alert, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
-
-export default function Write() {
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [imageURI, setImageURI] = useState(null);
     const [tag1, setTag1] = useState('');
-<<<<<<< HEAD
     const [query, setQuery] = useState('');
     const [songs, setSongs] = useState([]);
     const [token, setToken] = useState('');
@@ -88,10 +76,6 @@ export default function Write() {
         }
     }, [query, token]);
 
-=======
-
-    // 이미지 선택 함수
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
@@ -133,7 +117,6 @@ export default function Write() {
             Alert.alert('입력 오류', '제목과 내용은 필수 입력 항목입니다.');
         }
     };
-<<<<<<< HEAD
     /*
     const toggleFavorite = (song) => {
         const isFavorite = favorites.some((fav) => fav.id === song.id);
@@ -331,63 +314,6 @@ export default function Write() {
                 </View>
             }
             ListFooterComponent={
-=======
-
-    return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
-                <Text style={styles.title}>Write</Text>
-
-                {/* 사진 선택 */}
-                <TouchableOpacity onPress={pickImage}>
-                    {imageURI ? (
-                        <Image source={{ uri: imageURI }} style={styles.image} />
-                    ) : (
-                        <View style={styles.imagePlaceholder}>
-                            <MaterialIcons name="add-a-photo" size={50} color="gray" />
-                        </View>
-                    )}
-                </TouchableOpacity>
-
-                {/* 제목 입력 */}
-                <View style={styles.inputContainer}>
-                    <Ionicons name="menu" size={24} />
-                    <TextInput
-                        style={styles.input}
-                        value={title}
-                        onChangeText={setTitle}
-                        placeholder="제목을 입력하세요"
-                        keyboardType="default"
-                    />
-                </View>
-
-                {/* 내용 입력 */}
-                <View style={styles.inputContainer}>
-                    <Ionicons name="book" size={24} />
-                    <TextInput
-                        style={styles.input}
-                        value={content}
-                        onChangeText={setContent}
-                        placeholder="내용을 입력하세요"
-                        multiline={true}
-                        numberOfLines={4}
-                        keyboardType="default"
-                    />
-                </View>
-
-                {/* 태그 입력 */}
-                <View style={styles.inputContainer}>
-                    <Ionicons name="happy" size={24} />
-                    <TextInput
-                        style={styles.input}
-                        value={tag1}
-                        onChangeText={setTag1}
-                        placeholder="#감정"
-                    />
-                </View>
-
-                {/* 임시 저장 버튼과 저장 버튼 */}
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
                 <View style={styles.buttonWrapper}>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={handleSave}>
@@ -400,23 +326,17 @@ export default function Write() {
                         </TouchableOpacity>
                     </View>
                 </View>
-<<<<<<< HEAD
             }
             initialNumToRender={10}
             maxToRenderPerBatch={10}
             windowSize={21}
         />
-=======
-            </View>
-        </TouchableWithoutFeedback>
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-<<<<<<< HEAD
     },
     scrollContainer: {
         padding: 15,
@@ -431,16 +351,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 20,
         marginBottom: 10,
-=======
-        padding: 15,
-        justifyContent: 'space-between',
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        marginTop: 40,
-        marginBottom: 30,
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
         color: '#000',
         textAlign: 'center',
     },
@@ -450,10 +360,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: 'lightgray',
         marginBottom: 10,
-<<<<<<< HEAD
         left: 10,
-=======
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     },
     input: {
         paddingVertical: 15,
@@ -483,7 +390,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     buttonWrapper: {
-<<<<<<< HEAD
         position: 'absolute',
         bottom: 0,
         left: 0,
@@ -497,12 +403,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 3,
         elevation: 3, // Android용 그림자
-=======
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 20,
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     },
     buttonContainer: {
         width: '48%',
@@ -519,7 +419,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-<<<<<<< HEAD
     keywords: {
         borderWidth: 2,
         borderColor: '#D10000',
@@ -572,6 +471,3 @@ const styles = StyleSheet.create({
 });
 
 export default Write;
-=======
-});
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e

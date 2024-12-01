@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,14 +25,6 @@ const HeartList = ({ navigation, route }) => {
 
         return () => unsubscribe();
     }, []);
-=======
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-const HeartList = ({ navigation, route }) => {
-    const [favorites, setFavorites] = useState(route.params?.favorites || []); // 전달된 favorites 배열 받기
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
 
     // 하트 버튼을 눌렀을 때 해당 노래를 목록에서 삭제하는 함수
     const handleRemoveFavorite = (song) => {
@@ -48,7 +39,6 @@ const HeartList = ({ navigation, route }) => {
                 },
                 {
                     text: "예",
-<<<<<<< HEAD
                     onPress: async () => {
                         try {
                             const dbRef = ref(db, `heartList/${song.id}`);
@@ -57,13 +47,6 @@ const HeartList = ({ navigation, route }) => {
                         } catch (error) {
                             console.error('데이터 삭제 중 오류:', error);
                         }
-=======
-                    onPress: () => {
-                        // 선택한 노래를 목록에서 삭제
-                        const updatedFavorites = favorites.filter(fav => fav.id !== song.id);
-                        setFavorites(updatedFavorites);  // favorites 업데이트
-                        navigation.navigate('Chart', { favorites: updatedFavorites });  // Chart 페이지로 favorites 전달
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
                     }
                 }
             ]
@@ -143,11 +126,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-<<<<<<< HEAD
         backgroundColor: '#ffe6f2',
-=======
-        backgroundColor: '#FFC0CB',
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
         padding: 10,
         borderRadius: 8,
         shadowColor: '#000',
@@ -169,8 +148,4 @@ const styles = StyleSheet.create({
     },
 });
 
-<<<<<<< HEAD
 export default HeartList;
-=======
-export default HeartList;
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e

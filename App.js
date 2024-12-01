@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import 'react-native-gesture-handler';
 import 'react-native-url-polyfill/auto';
-=======
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -56,8 +53,4 @@ const App = () => {
     );
 };
 
-<<<<<<< HEAD
 export default App;
-=======
-export default App;
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
