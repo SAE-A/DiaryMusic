@@ -1,5 +1,6 @@
 {
   "expo": {
+<<<<<<< HEAD
     "name": "MP01",
     "slug": "MP01",
     "version": "1.0.0",
@@ -8,16 +9,34 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+=======
+    "name": "pj01",
+    "slug": "pj01",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+>>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
+<<<<<<< HEAD
         "foregroundImage": "./assets/images/adaptive-icon.png",
+=======
+        "foregroundImage": "./assets/adaptive-icon.png",
+>>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
+<<<<<<< HEAD
       "bundler": "metro",
       "output": "static"
     },
@@ -35,5 +54,12 @@
     "experiments": {
       "typedRoutes": true
     }
+=======
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+>>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
   }
 }
