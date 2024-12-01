@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { ref, onValue, remove } from 'firebase/database';
+import { db } from './firebase'; // 경로 확인
 
 const HeartList = ({ navigation, route }) => {
-    const [favorites, setFavorites] = useState(route.params?.favorites || []); // 전달된 favorites 배열 받기
+    const [favorites, setFavorites] = useState([]);
+
+    // Firebase 데이터 실시간 업데이트
+    useEffect(() => {
+        const dbRef = ref(db, 'heartList/');
+        const unsubscribe = onValue(dbRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const formattedData = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key],
+                }));
+                setFavorites(formattedData);
+            } else {
+                setFavorites([]);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     // 하트 버튼을 눌렀을 때 해당 노래를 목록에서 삭제하는 함수
     const handleRemoveFavorite = (song) => {
@@ -18,11 +39,14 @@ const HeartList = ({ navigation, route }) => {
                 },
                 {
                     text: "예",
-                    onPress: () => {
-                        // 선택한 노래를 목록에서 삭제
-                        const updatedFavorites = favorites.filter(fav => fav.id !== song.id);
-                        setFavorites(updatedFavorites);  // favorites 업데이트
-                        navigation.navigate('Chart', { favorites: updatedFavorites });  // Chart 페이지로 favorites 전달
+                    onPress: async () => {
+                        try {
+                            const dbRef = ref(db, `heartList/${song.id}`);
+                            await remove(dbRef);  // Firebase에서 데이터 삭제
+                            console.log(`${song.title} 삭제됨`);
+                        } catch (error) {
+                            console.error('데이터 삭제 중 오류:', error);
+                        }
                     }
                 }
             ]
