@@ -1,45 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { ref, set, push, onValue } from 'firebase/database';
+import { db } from './firebase'; // Firebase 설정 파일 임포트
+
 const { width } = Dimensions.get('window');
 
-// 예시 데이터
-const samplePosts = [
-    {
-        id: '1',
-        title: '일상의 소소한 행복',
-        content: '오늘은 노을이 정말 예뻤던 하루, 선선한 가을 날씨에 기분이 좋아졌다~',
-        tag: '#행복',
-        date: '2024-11-20',
-        image: require('../../assets/logo.png'),
-    },
-    {
-        id: '2',
-        title: '우리 집 강아지와 함께',
-        content: '오늘은 집에서 책을 읽으며 조용히 보냈다. 마음이 차분해진다.',
-        tag: '#평온',
-        date: '2024-11-19',
-        image: require('../../assets/logo.png'),
-    },
-];
-
 const Story = () => {
+    const [posts, setPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        // Firebase에서 스토리 데이터 불러오기
+        const storiesRef = ref(db, 'dateData');
+        const unsubscribe = onValue(storiesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const loadedPosts = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key],
+                }));
+                setPosts(loadedPosts);
+            } else {
+                setPosts([]);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+    const currentPost = posts[currentIndex] || {};
 
     const handlePrevious = () => {
         setCurrentIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : samplePosts.length - 1
+            prevIndex > 0 ? prevIndex - 1 : posts.length - 1
         );
     };
 
     const handleNext = () => {
         setCurrentIndex((prevIndex) =>
-            prevIndex < samplePosts.length - 1 ? prevIndex + 1 : 0
+            prevIndex < posts.length - 1 ? prevIndex + 1 : 0
         );
     };
-
-    const currentPost = samplePosts[currentIndex];
 
     return (
         <View style={styles.container}>
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 10,
-        marginBottom : 10,
+        marginBottom: 10,
         backgroundColor: '#ffe6f2',
         borderRadius: 10,
         padding: 10,

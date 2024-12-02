@@ -1,17 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-<<<<<<< HEAD
     "\\assets",
     "\\src",
     "\\src\\components"
   ],
-  "SelectedNode": "\\tsconfig.json",
-=======
-    "\\src",
-    "\\src\\components"
-  ],
-  "SelectedNode": "\\src\\components\\Write.js",
->>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e
+  "SelectedNode": "\\src\\components\\Buttons.js",
   "PreviewInSolutionExplorer": false
 }

@@ -23,6 +23,29 @@ const Chart = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            console.error('Firebase Database is not initialized');
+            return;
+        }
+
+        const dbRef = ref(db, 'heartList/');
+        const unsubscribe = onValue(dbRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const formattedData = Object.keys(data).map((key) => ({
+                    id: key,
+                    ...data[key],
+                }));
+                setFavorites(formattedData);
+            } else {
+                setFavorites([]);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
         const fetchGenieChart = async () => {
             try {
                 const response = await axios.post(REALTIME_CHART_API_URL, null, {
