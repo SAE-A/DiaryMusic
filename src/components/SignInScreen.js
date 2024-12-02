@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore'; // Firestore에서 데이터 가져오기
-import { auth, db } from '../../firebaseConfig'; 
+import { auth, db } from '../../firebaseConfig';
 
 const SignInScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ const SignInScreen = ({ navigation }) => {
 
     const fetchUserData = async (uid) => {
         try {
-            const docRef = doc(db, 'user_data', uid); 
+            const docRef = doc(db, 'user_data', uid);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
@@ -23,20 +23,53 @@ const SignInScreen = ({ navigation }) => {
         }
     };
 
+    const validateInputs = () => {
+        if (!email.trim()) {
+            Alert.alert('오류', '이메일을 입력하세요.');
+            return false;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            Alert.alert('오류', '유효하지 않은 이메일 형식입니다.');
+            return false;
+        }
+
+        if (password.length < 4 || password.length > 14) {
+            Alert.alert('오류', '비밀번호는 4자 이상, 14자 이내로 작성해야 합니다.');
+            return false;
+        }
+
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,14}$/.test(password)) {
+            Alert.alert('오류', '비밀번호는 영어와 숫자를 포함해야 합니다.');
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSignIn = async () => {
+        if (!validateInputs()) return;
+
         try {
             // Firebase 로그인 처리
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user; // 로그인된 사용자 정보
             Alert.alert('로그인 성공', '환영합니다!');
-            
+
             // 사용자 데이터 가져오기
             await fetchUserData(user.uid);
 
             navigation.navigate('Chart'); // 로그인 후 Chart 화면으로 이동
         } catch (error) {
-            // 오류 메시지 처리
-            Alert.alert('로그인 실패', error.message);
+            let errorMessage = '오류가 발생했습니다.';
+            if (error.code === 'auth/user-not-found') {
+                errorMessage = '등록되지 않은 사용자입니다.';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMessage = '잘못된 비밀번호입니다.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage = '잠시 후 다시 시도하세요.';
+            }
+            Alert.alert('로그인 실패', errorMessage);
         }
     };
 
