@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // Firestore에서 데이터 가져오기
+import { doc, getDoc } from 'firebase/database'; // Firestore에서 데이터 가져오기
 import { auth, db } from './firebase';
 
 const SignInScreen = ({ navigation }) => {
@@ -75,7 +75,7 @@ const SignInScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>로그인</Text>
+            <Text style={styles.title}>LOGIN</Text>
             <TextInput
                 style={styles.input}
                 placeholder="이메일 입력"

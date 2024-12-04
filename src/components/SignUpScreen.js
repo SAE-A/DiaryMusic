@@ -52,7 +52,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>회원가입</Text>
+            <Text style={styles.title}>JOIN</Text>
             <TextInput
                 style={styles.input}
                 placeholder="이름 입력"

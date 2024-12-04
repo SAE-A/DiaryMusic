@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\assets",
     "\\src",
     "\\src\\components"
   ],
-  "SelectedNode": "\\src\\components\\Buttons.js",
+  "SelectedNode": "\\src\\components\\SignUpScreen.js",
   "PreviewInSolutionExplorer": false
 }

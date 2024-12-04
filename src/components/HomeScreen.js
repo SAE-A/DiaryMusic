@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 
 const HomeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to the App</Text>
+            {/* 로고 이미지 */}
+            <Image
+                source={require('../../assets/logo.png')} // 로컬 이미지 경로
+                style={styles.logo}
+            />
+
+            <Text style={styles.title}>Diary Music</Text>
 
             {/* 로그인 버튼 */}
             <TouchableOpacity
@@ -40,10 +46,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f5f5f5', // 배경색
     },
+    logo: {
+        width: 300,
+        height: 300,
+        marginBottom: 0,
+    },
     title: {
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: 'bold',
         marginBottom: 30,
+        color: '#000',
+        textAlign: 'center',
     },
     button: {
         backgroundColor: '#D10000', // 빨간색 배경
