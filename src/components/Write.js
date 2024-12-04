@@ -17,11 +17,10 @@ const genres = [
     'Energetic',
     'Calm',
     'Romantic',
-    'Melancholic',
     'Motivational',
+    'Blue',
     'Relaxing',
-    'Angry',
-    'Nostalgic'
+    'Angry'
 ];
 
 function Write() {
@@ -30,18 +29,17 @@ function Write() {
     const [content, setContent] = useState('');
     const [imageURI, setImageURI] = useState(null);
     const [tag1, setTag1] = useState('');
-    const [randomGenres, setRandomGenres] = useState([]);  // 랜덤 장르 목록 상태
     const [selectedGenre, setSelectedGenre] = useState(''); // 선택된 장르 상태
     const [isPopupVisible, setIsPopupVisible] = useState(false); // 추천곡 팝업 상태
     const [recommendedSongs, setRecommendedSongs] = useState([]); // 추천된 노래 목록
     const [selectedSong, setSelectedSong] = useState(''); // 선택된 노래
     const [selectedArtist, setSelectedArtist] = useState(''); // 선택된 아티스트
+    const [allGenres, setAllGenres] = useState([]);
 
     useEffect(() => {
-        // 컴포넌트가 렌더링될 때 장르 10개 중 랜덤 선택
-        const shuffledGenres = genres.sort(() => 0.5 - Math.random());
-        setRandomGenres(shuffledGenres.slice(0, 5));
+        setAllGenres(genres.slice(0, 10)); // 장르 10개를 상태에 저장
     }, []);
+
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -229,7 +227,7 @@ function Write() {
                         </View>
 
                         <View style={styles.genreContainer}>
-                            {genres.slice(0, 5).map((genre) => (
+                            {allGenres.map((genre) => (
                                 <TouchableOpacity
                                     key={genre}
                                     style={[styles.genreButton, selectedGenre === genre && styles.selectedGenreButton]}
