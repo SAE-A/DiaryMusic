@@ -1,37 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-import { ref, set, push, onValue } from 'firebase/database';
-import { database } from './firebase'; // Firebase 설정 파일 임포트
+import { get, ref } from 'firebase/database';
+import { database } from './firebase';
 
 const { width } = Dimensions.get('window');
 
 const Story = () => {
     const [posts, setPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
 
+    // Firebase 데이터 가져오기
     useEffect(() => {
-        // Firebase에서 스토리 데이터 불러오기
-        const storiesRef = ref(database, 'dateData');
-        const unsubscribe = onValue(storiesRef, (snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const loadedPosts = Object.keys(data).map(key => ({
-                    id: key,
-                    ...data[key],
-                }));
-                setPosts(loadedPosts);
-            } else {
-                setPosts([]);
+        const fetchPosts = async () => {
+            try {
+                const postsRef = ref(database, 'dateData');
+                const snapshot = await get(postsRef);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    // Firebase 데이터에서 날짜를 키로 사용하므로, 이를 배열로 변환
+                    const formattedPosts = Object.keys(data).map((date) => ({
+                        date: date,
+                        ...data[date],
+                    }));
+                    setPosts(formattedPosts);
+                } else {
+                    setPosts([]); // 데이터가 없는 경우 빈 배열
+                }
+            } catch (error) {
+                console.error('Firebase 데이터 읽기 오류:', error);
+                Alert.alert('오류', '데이터를 불러오는 중 오류가 발생했습니다.');
+            } finally {
+                setLoading(false);
             }
-        });
+        };
 
-        return () => unsubscribe();
+        fetchPosts();
     }, []);
-
-
-    const currentPost = posts[currentIndex] || {};
 
     const handlePrevious = () => {
         setCurrentIndex((prevIndex) =>
@@ -45,6 +51,27 @@ const Story = () => {
         );
     };
 
+    // 로딩 상태 처리
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#D10000" />
+            </View>
+        );
+    }
+
+    // 데이터가 없을 경우 처리
+    if (posts.length === 0) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.title}>My Story</Text>
+                <Text style={styles.noDataText}>저장된 데이터가 없습니다.</Text>
+            </View>
+        );
+    }
+
+    const currentPost = posts[currentIndex];
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>My Story</Text>
@@ -53,7 +80,14 @@ const Story = () => {
                 {/* 이미지와 날짜 표시 */}
                 <View style={styles.imageWrapper}>
                     <Text style={styles.dateText}>{currentPost.date}</Text>
-                    <Image source={currentPost.image} style={styles.postImage} />
+                    {currentPost.imageURI ? (
+                        <Image source={{ uri: currentPost.imageURI }} style={styles.postImage} />
+                    ) : (
+                        <View style={styles.noImagePlaceholder}>
+                            <Ionicons name="image" size={50} color="gray" />
+                            <Text style={styles.noImageText}>이미지 없음</Text>
+                        </View>
+                    )}
                 </View>
 
                 {/* 텍스트 데이터 표시 */}
@@ -81,6 +115,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f9f9f9',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     title: {
         fontSize: 32,
@@ -95,7 +131,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 10,
-        marginBottom: 10,
         backgroundColor: '#ffe6f2',
         borderRadius: 10,
         padding: 10,
@@ -103,14 +138,26 @@ const styles = StyleSheet.create({
     },
     imageWrapper: {
         position: 'relative',
-        width: '100%',
+        width: '50%',
         alignItems: 'center',
     },
     postImage: {
         width: width * 0.8,
         height: width * 0.8,
-        aspectRatio: 1,
-        //borderRadius: 10,
+        borderRadius: 10,
+    },
+    noImagePlaceholder: {
+        width: width * 0.8,
+        height: width * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#e0e0e0',
+        borderRadius: 10,
+    },
+    noImageText: {
+        marginTop: 10,
+        fontSize: 14,
+        color: 'gray',
     },
     dateText: {
         width: '100%',
@@ -121,7 +168,7 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: 'bold',
         position: 'absolute',
-        top: 0,
+        top: -30,
         zIndex: 1,
     },
     textContainer: {
@@ -131,17 +178,26 @@ const styles = StyleSheet.create({
     postTitle: {
         fontSize: 18,
         fontWeight: 'bold',
+        marginTop: 10,
         marginBottom: 10,
     },
     postContent: {
         fontSize: 14,
         color: '#333',
+        marginTop: 10,
         marginBottom: 10,
         textAlign: 'center',
     },
     postTag: {
         fontSize: 12,
         color: '#888',
+        marginTop: 5,
+    },
+    noDataText: {
+        fontSize: 18,
+        color: '#888',
+        textAlign: 'center',
+        marginTop: 50,
     },
     navigation: {
         flexDirection: 'row',

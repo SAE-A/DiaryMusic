@@ -153,7 +153,7 @@ function Write() {
             set(dbRef, {
                 title: title,
                 content: content,
-                tag: tag1 || '태그 없음',
+                tag: tag1 || '',
                 date: date,
                 imageURI: imageURI || null,
                 genre: selectedGenre || '장르 없음',
