@@ -134,7 +134,7 @@ function Write() {
 
     const handleSave = () => {
         if (title.trim() !== '' && content.trim() !== '') {
-            Alert.alert('SAVE', '작성한 일기가 임시 저장되었습니다.');
+            Alert.alert('CANCEL', '작성한 일기가 취소되었습니다.');
             setTitle('');
             setContent('');
             setTag1('');
@@ -256,7 +256,7 @@ function Write() {
                 <View style={styles.buttonWrapper}>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={handleSave}>
-                            <Text style={styles.buttonText}>임시 저장</Text>
+                            <Text style={styles.buttonText}>취소</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.buttonContainer}>
