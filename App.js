@@ -30,11 +30,13 @@ const App = () => {
                     name="SignInScreen"
                     component={SignInScreen}
                     options={{ headerShown: false }}
+                    initialParams={{ favorites, setFavorites }} //
                 />
                 <Stack.Screen
                     name="SignUpScreen"
                     component={SignUpScreen}
                     options={{ headerShown: false }}
+                    initialParams={{ favorites, setFavorites }} //
                 />
                 <Stack.Screen
                     name="Chart"

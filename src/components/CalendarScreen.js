@@ -4,7 +4,7 @@ import CalendarView from '../components/CalendarView';
 import DateInfo from '../components/DateInfo';
 import EmojiModal from '../components/EmojiModal';
 import { ref, onValue, set } from 'firebase/database'; // Firebase 관련 함수 임포트
-import { db } from './firebase'; // Firebase 설정 파일에서 db 가져오기
+import { database } from './firebase';
 
 const CalendarScreen = () => {
     const [selectedDate, setSelectedDate] = useState('');
@@ -21,7 +21,7 @@ const CalendarScreen = () => {
 
     // 모든 날짜 데이터 불러오기
     useEffect(() => {
-        const storiesRef = ref(db, 'dateData');
+        const storiesRef = ref(database, 'dateData');
         const unsubscribe = onValue(storiesRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -50,7 +50,7 @@ const CalendarScreen = () => {
         setSelectedDate(date);
 
         // Firebase에서 해당 날짜의 데이터 불러오기
-        const dbRef = ref(db, `dateData/${date}`);
+        const dbRef = ref(database, `dateData/${date}`);
         onValue(dbRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -80,7 +80,7 @@ const CalendarScreen = () => {
     const selectEmoji = (selectedEmoji) => {
         if (selectedDate) {
             // Firebase에서 현재 날짜 데이터 가져오기
-            const dbRef = ref(db, `dateData/${selectedDate}`);
+            const dbRef = ref(database, `dateData/${selectedDate}`);
             onValue(dbRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const currentData = snapshot.val();

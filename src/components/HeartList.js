@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ref, onValue, remove } from 'firebase/database';
-import { db } from './firebase'; // 경로 확인
+import { database } from './firebase'; // 경로 확인
 
 const HeartList = ({ navigation, route }) => {
     const [favorites, setFavorites] = useState([]);
 
     // Firebase 데이터 실시간 업데이트
     useEffect(() => {
-        const dbRef = ref(db, 'heartList/');
+        const dbRef = ref(database, 'heartList/');
         const unsubscribe = onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -41,7 +41,7 @@ const HeartList = ({ navigation, route }) => {
                     text: "예",
                     onPress: async () => {
                         try {
-                            const dbRef = ref(db, `heartList/${song.id}`);
+                            const dbRef = ref(database, `heartList/${song.id}`);
                             await remove(dbRef);  // Firebase에서 데이터 삭제
                             console.log(`${song.title} 삭제됨`);
                         } catch (error) {

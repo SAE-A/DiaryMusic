@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import { ref, onValue, set } from 'firebase/database';
-import { db } from './firebase';
+import { database } from './firebase';
 import Buttons from './Buttons';
 
 const REALTIME_CHART_API_URL = 'https://app.genie.co.kr/chart/j_RealTimeRankSongList.json';
@@ -23,12 +23,12 @@ const Chart = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!db) {
+        if (!database) {
             console.error('Firebase Database is not initialized');
             return;
         }
 
-        const dbRef = ref(db, 'heartList/');
+        const dbRef = ref(database, 'heartList/');
         const unsubscribe = onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -90,7 +90,7 @@ const Chart = ({ navigation, route }) => {
 
     // Firebase에서 favorites 상태를 동기화
     useEffect(() => {
-        const dbRef = ref(db, 'heartList/');
+        const dbRef = ref(database, 'heartList/');
         const unsubscribe = onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -123,7 +123,7 @@ const Chart = ({ navigation, route }) => {
                         if (isFavorite) {
                             // Firebase에서 노래 제거
                             try {
-                                const dbRef = ref(db, `heartList/${song.id}`);
+                                const dbRef = ref(database, `heartList/${song.id}`);
                                 await set(dbRef, null); // 해당 노래 삭제
                             } catch (error) {
                                 console.error('데이터 삭제 중 오류:', error);
@@ -131,7 +131,7 @@ const Chart = ({ navigation, route }) => {
                         } else {
                             // Firebase에 노래 추가
                             try {
-                                const dbRef = ref(db, `heartList/${song.id}`);
+                                const dbRef = ref(database, `heartList/${song.id}`);
                                 await set(dbRef, {
                                     title: song.title,
                                     artist: song.artist,

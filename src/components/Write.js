@@ -4,7 +4,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, set } from 'firebase/database';
-import { db } from './firebase'; // Firebase 설정 파일 임포트
+import { database } from './firebase'; // Firebase 설정 파일 임포트
 import axios from 'axios'; // AI 추천 요청을 위한 라이브러리
 import { useNavigation } from '@react-navigation/native';
 
@@ -115,7 +115,7 @@ function Write() {
     // 하트 버튼 클릭 시 Firebase에 데이터 추가
     const handleHeartButtonPress = () => {
         if (selectedSong && selectedArtist) {
-            const dbRef = ref(db, 'heartList/' + Date.now());  // 'heartList' 아래에 새로운 항목 추가
+            const dbRef = ref(database, 'heartList/' + Date.now());  // 'heartList' 아래에 새로운 항목 추가
             set(dbRef, {
                 title: selectedSong,
                 artist: selectedArtist,
@@ -149,7 +149,7 @@ function Write() {
     const handleSubmit = () => {
         if (title.trim() !== '' && content.trim() !== '') {
             const date = new Date().toISOString().split('T')[0];
-            const dbRef = ref(db, `dateData/${date}`);
+            const dbRef = ref(database, `dateData/${date}`);
             set(dbRef, {
                 title: title,
                 content: content,
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffe6f2',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        marginRight: 10, 
+        marginRight: 10,
         marginBottom: 10,
         borderRadius: 20,
         borderWidth: 0.5,
@@ -427,8 +427,8 @@ const styles = StyleSheet.create({
         color: '#D10000',
         textAlign: 'center',
         fontSize: 20,
-        borderWidth: 2, 
-        borderColor: 'pink', 
+        borderWidth: 2,
+        borderColor: 'pink',
         borderRadius: 10,
         padding: 5,
         borderStyle: 'solid',

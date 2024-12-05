@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 
 import { ref, set, push, onValue } from 'firebase/database';
-import { db } from './firebase'; // Firebase 설정 파일 임포트
+import { database } from './firebase'; // Firebase 설정 파일 임포트
 
 const { width } = Dimensions.get('window');
 
@@ -13,7 +13,7 @@ const Story = () => {
 
     useEffect(() => {
         // Firebase에서 스토리 데이터 불러오기
-        const storiesRef = ref(db, 'dateData');
+        const storiesRef = ref(database, 'dateData');
         const unsubscribe = onValue(storiesRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();

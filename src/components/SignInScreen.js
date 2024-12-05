@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/database'; // Firestore에서 데이터 가져오기
-import { auth, db } from './firebase';
+import { auth, database } from './firebase';
 
 const SignInScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ const SignInScreen = ({ navigation }) => {
 
     const fetchUserData = async (uid) => {
         try {
-            const docRef = doc(db, 'user_data', uid);
+            const docRef = doc(database, 'user_data', uid);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
