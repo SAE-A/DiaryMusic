@@ -12,6 +12,7 @@ import CalendarScreen from './src/components/CalendarScreen';
 import HomeScreen from './src/components/HomeScreen';
 import SignInScreen from './src/components/SignInScreen';
 import SignUpScreen from './src/components/SignUpScreen';
+import { UserProvider } from './src/components/UserContext'; // UserProvider 추가
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const App = () => {
     const [favorites, setFavorites] = useState([]);
 
     return (
+    <UserProvider>
         <NavigationContainer>
             <Stack.Navigator initialRouteName="HomeScreen">
                 <Stack.Screen
@@ -30,13 +32,11 @@ const App = () => {
                     name="SignInScreen"
                     component={SignInScreen}
                     options={{ headerShown: false }}
-                    initialParams={{ favorites, setFavorites }} //
                 />
                 <Stack.Screen
                     name="SignUpScreen"
                     component={SignUpScreen}
                     options={{ headerShown: false }}
-                    initialParams={{ favorites, setFavorites }} //
                 />
                 <Stack.Screen
                     name="Chart"
@@ -70,6 +70,8 @@ const App = () => {
                 />
             </Stack.Navigator>
         </NavigationContainer>
+    </UserProvider>
+    
     );
 };
 

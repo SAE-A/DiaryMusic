@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, Alert, View, TouchableOpacity } from 'react-native';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'; 
+import { db } from './firebase';
 import { auth } from './firebase';
+import { useUser } from './UserContext'; // useUser 훅 불러오기
 
 const SignUpScreen = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { setUser } = useUser(); // useUser 훅 사용
 
     const handleSignUp = async () => {
         // 입력값 검증
@@ -28,14 +32,27 @@ const SignUpScreen = ({ navigation }) => {
         try {
             // Firebase 회원가입 처리
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-            // 이름 설정
-            await updateProfile(userCredential.user, {
-                displayName: name,
+            // Firestore에 사용자 데이터 저장
+            await setDoc(doc(db, "users", user.uid), {
+                name: name,
+                email: email,
+                createdAt: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }), // 한국 시간으로 저장
             });
 
+            // UserContext에 사용자 정보 설정
+            setUser({ uid: user.uid, name: name, email: email });
+            console.log("UserContext에 저장된 사용자 정보:", { uid: user.uid, name: name, email: email });
+
             Alert.alert('회원가입 성공', '계정이 성공적으로 생성되었습니다!');
-            navigation.navigate('Chart'); // 회원가입 후 Chart 화면으로 이동
+            
+            // Chart 화면으로 이동
+            navigation.reset({
+                index: 0, // 초기 화면으로 설정
+                routes: [{ name: 'Chart' }], // Chart 화면을 첫 화면으로 설정
+            });
+
         } catch (error) {
             // 사용자 친화적인 오류 메시지
             let errorMessage = '오류가 발생했습니다.';
@@ -46,6 +63,7 @@ const SignUpScreen = ({ navigation }) => {
             } else if (error.code === 'auth/weak-password') {
                 errorMessage = '비밀번호는 6자 이상이어야 합니다.';
             }
+            console.error('회원가입 오류:', error.code, error.message);
             Alert.alert('오류', errorMessage);
         }
     };

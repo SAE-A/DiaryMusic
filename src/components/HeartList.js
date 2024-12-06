@@ -3,13 +3,17 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ref, onValue, remove } from 'firebase/database';
 import { database } from './firebase'; // 경로 확인
+import { useUser } from './UserContext';
 
 const HeartList = ({ navigation, route }) => {
+    const { user } = useUser(); // 로그인한 사용자 정보 가져오기
     const [favorites, setFavorites] = useState([]);
 
     // Firebase 데이터 실시간 업데이트
     useEffect(() => {
-        const dbRef = ref(database, 'heartList/');
+        if(user){
+
+        const dbRef = ref(database, `heartList/${user.uid}`);
         const unsubscribe = onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -24,7 +28,8 @@ const HeartList = ({ navigation, route }) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }
+    }, [user]);
 
     // 하트 버튼을 눌렀을 때 해당 노래를 목록에서 삭제하는 함수
     const handleRemoveFavorite = (song) => {
@@ -41,7 +46,7 @@ const HeartList = ({ navigation, route }) => {
                     text: "예",
                     onPress: async () => {
                         try {
-                            const dbRef = ref(database, `heartList/${song.id}`);
+                            const dbRef = ref(database, `heartList/${user.uid}`);
                             await remove(dbRef);  // Firebase에서 데이터 삭제
                             console.log(`${song.title} 삭제됨`);
                         } catch (error) {

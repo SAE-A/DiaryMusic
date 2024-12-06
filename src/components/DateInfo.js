@@ -14,7 +14,7 @@ const DateInfo = ({ dateInfo, onEmojiPress }) => (
             <Text style={styles.infoContent}>{dateInfo.title}</Text>
         </View>
         <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>사용한 키워드</Text>
+            <Text style={styles.infoLabel}>입력한 감정</Text>
             <Text style={styles.infoContent}>{dateInfo.keywords}</Text>
         </View>
         <View style={styles.infoBox}>

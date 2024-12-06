@@ -7,6 +7,7 @@ import { ref, set } from 'firebase/database';
 import { database } from './firebase'; // Firebase 설정 파일 임포트
 import axios from 'axios'; // AI 추천 요청을 위한 라이브러리
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from './UserContext';
 
 const apiKey = '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';
 const { width, height } = Dimensions.get('window');
@@ -24,6 +25,7 @@ const genres = [
 ];
 
 function Write() {
+    const { user } = useUser(); //로그인한 사용자 정보 가져오기
     const navigation = useNavigation(); // React Navigation을 사용하여 페이지 간 이동
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -114,8 +116,9 @@ function Write() {
 
     // 하트 버튼 클릭 시 Firebase에 데이터 추가
     const handleHeartButtonPress = () => {
-        if (selectedSong && selectedArtist) {
-            const dbRef = ref(database, 'heartList/' + Date.now());  // 'heartList' 아래에 새로운 항목 추가
+        if (user && selectedSong && selectedArtist) {
+            const songId = Date.now(); //고유 ID를 위한 간단한 생성
+            const dbRef = ref(database, `heartList/${user.uid}/${songId}`);  // 'heartList' 아래에 새로운 항목 추가
             set(dbRef, {
                 title: selectedSong,
                 artist: selectedArtist,
@@ -147,17 +150,21 @@ function Write() {
     };
 
     const handleSubmit = () => {
+    if(user){    
         if (title.trim() !== '' && content.trim() !== '') {
-            const date = new Date().toISOString().split('T')[0];
-            const dbRef = ref(database, `dateData/${date}`);
+            // 현재 날짜를 한국 표준시(KST)로 변환하고 안전한 형식으로 포맷
+            const localDate = new Date().toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
+            const safePathDate = localDate.replace(/[.]/g, "").replace(/\s/g, "_"); // 점(.) 제거, 공백(_) 대체
+    
+            const dbRef = ref(database, `dateData/${user.uid}/${safePathDate}`);
             set(dbRef, {
                 title: title,
                 content: content,
                 tag: tag1 || '',
-                date: date,
+                date: safePathDate, // 저장된 경로와 동일한 형식
                 imageURI: imageURI || null,
                 genre: selectedGenre || '장르 없음',
-                song: selectedSong || '노래 없음'
+                song: selectedSong || '노래 없음',
             })
                 .then(() => {
                     Alert.alert('저장 완료', '스토리가 저장되었습니다.');
@@ -174,7 +181,13 @@ function Write() {
         } else {
             Alert.alert('입력 오류', '제목과 내용은 필수 입력 항목입니다.');
         }
+        
+    }
+    else {
+        Alert.alert('오류', '로그인이 필요합니다.');
+    }
     };
+    
 
     return (
         <ScrollView>

@@ -3,27 +3,33 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert, Act
 import { Ionicons } from '@expo/vector-icons';
 import { get, ref } from 'firebase/database';
 import { database } from './firebase';
+import { useUser } from './UserContext';
 
 const { width } = Dimensions.get('window');
 
 const Story = () => {
+    const { user } = useUser(); // 사용자 정보 가져오기
     const [posts, setPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
     // Firebase 데이터 가져오기
     useEffect(() => {
+        if(user){
         const fetchPosts = async () => {
             try {
-                const postsRef = ref(database, 'dateData');
+                const postsRef = ref(database, `dateData/${user.uid}`);
                 const snapshot = await get(postsRef);
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     // Firebase 데이터에서 날짜를 키로 사용하므로, 이를 배열로 변환
-                    const formattedPosts = Object.keys(data).map((date) => ({
-                        date: date,
-                        ...data[date],
-                    }));
+                    const formattedPosts = Object.keys(data).map((date) => {
+                        const localDate = new Date(date).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+                        return {
+                            date: localDate,
+                            ...data[date],
+                        };
+                    });
                     setPosts(formattedPosts);
                 } else {
                     setPosts([]); // 데이터가 없는 경우 빈 배열
@@ -35,9 +41,10 @@ const Story = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchPosts();
-    }, []);
+        }
+    }, [user]);
 
     const handlePrevious = () => {
         setCurrentIndex((prevIndex) =>

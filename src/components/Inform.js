@@ -1,56 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // FontAwesome 아이콘 사용
-import Buttons from './Buttons';  // Buttons 컴포넌트 임포트
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Buttons from './Buttons';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase';
+import { useUser } from './UserContext';
 
 const Inform = ({ navigation, route }) => {
-    const { favorites } = route.params || {};  // favorites가 없을 수도 있기 때문에 안전하게 처리
-    const [name, setName] = useState('');
-    const [id, setId] = useState('');
+    const { user, setUser } = useUser(); // 로그인 시 전달된 데이터만 사용
+
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth); // Firebase 로그아웃 처리
+            setUser(null); // 사용자 데이터 초기화
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'HomeScreen' }], // 로그인 화면으로 이동
+            });
+        } catch (error) {
+            Alert.alert('오류', '로그아웃 중 문제가 발생했습니다.');
+            console.error('로그아웃 오류:', error);
+        }
+    };
 
     return (
         <View style={styles.container}>
-            {/* 제목 */}
             <Text style={styles.title}>Inform</Text>
 
-            {/* 이름과 ID 입력 */}
+            {/* 사용자 정보 표시 */}
             <View style={styles.inputContainer}>
                 <View style={styles.pinkBox}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Name"
-                        value={name}
-                        onChangeText={setName}
-                    />
+                    <Text style={styles.input}>Name: {user?.name|| '정보 없음'}</Text>
                 </View>
                 <View style={styles.pinkBox}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="ID"
-                        value={id}
-                        onChangeText={setId}
-                    />
+                    <Text style={styles.input}>ID: {user?.email || '정보 없음'}</Text>
                 </View>
             </View>
 
             {/* Heart List 버튼 */}
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('HeartList', { favorites })}
+                onPress={() => navigation.navigate('HeartList', { favorites: route.params?.favorites })}
             >
                 <View style={styles.iconContainer}>
-                    {/* FontAwesome 하트 아이콘과 텍스트를 Text 컴포넌트로 감싸기 */}
                     <Text style={styles.buttonText}>Heart List </Text>
                     <Icon name="heart" size={24} color="#fff" />
                 </View>
             </TouchableOpacity>
 
-            <Buttons navigation={navigation} favorites={favorites} />
+            {/* 로그아웃 버튼 */}
+            <TouchableOpacity style={styles.LogoutButton} onPress={handleSignOut}>
+                <Text style={styles.LogoutButtonText}>로그아웃</Text>
+            </TouchableOpacity>
+
+            <Buttons navigation={navigation} favorites={route.params?.favorites} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    // 스타일 코드는 이전과 동일
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -103,7 +112,20 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-    }
+    },
+
+    LogoutButton: {
+        backgroundColor: '#D10000',
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 8,
+        marginTop: 20,
+    },
+    LogoutButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
 export default Inform;

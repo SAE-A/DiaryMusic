@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
@@ -35,9 +36,13 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+app-example
+=======
+
 # Visual Studio 관련 파일들 무시
 .vs/
 .vscode/
 .idea/
 *.log
 *.tmp
+>>>>>>> 64a14a76d252e5065827398ba5803e6e120e343e

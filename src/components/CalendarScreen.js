@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Alert } from 'react-native';
 import CalendarView from '../components/CalendarView';
 import DateInfo from '../components/DateInfo';
 import EmojiModal from '../components/EmojiModal';
 import { ref, onValue, set } from 'firebase/database'; // Firebase 관련 함수 임포트
 import { database } from './firebase';
+import { useUser } from './UserContext';
 
 const CalendarScreen = () => {
+    const { user } = useUser(); // 로그인한 사용자 정보 가져오기
     const [selectedDate, setSelectedDate] = useState('');
     const [dateInfo, setDateInfo] = useState({
         date: '날짜 없음',
         title: '제목 없음',
-        keywords: '키워드 없음',
+        keywords: '입력된 감정 없음',
         song: '추천곡 없음',
         emoji: '이모티콘 없음',
     });
@@ -21,7 +23,9 @@ const CalendarScreen = () => {
 
     // 모든 날짜 데이터 불러오기
     useEffect(() => {
-        const storiesRef = ref(database, 'dateData');
+        if(user){
+
+        const storiesRef = ref(database, `dateData/${user.uid}`);
         const unsubscribe = onValue(storiesRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -43,44 +47,52 @@ const CalendarScreen = () => {
 
         // 컴포넌트가 언마운트될 때 Firebase 구독 해제
         return () => unsubscribe();
-    }, []);
+        } 
+    }, [user]);
 
     const onDayPress = (day) => {
-        const date = day.dateString;
-        setSelectedDate(date);
-
-        // Firebase에서 해당 날짜의 데이터 불러오기
-        const dbRef = ref(database, `dateData/${date}`);
+        if(user){
+        // 날짜만 한국 표준시로 변환
+        const localDate = new Date(day.dateString).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
+        setSelectedDate(localDate); // 날짜만 선택된 상태로 저장
+    
+        // Firebase에서 해당 날짜의 데이터 가져오기
+        const safePathDate = localDate.replace(/[.]/g, "").replace(/\s/g, "_"); // 점(.) 제거, 공백(_)으로 대체
+        const dbRef = ref(database, `dateData/${user.uid}/${safePathDate}`);
+    
         onValue(dbRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                console.log('불러온 데이터:', data); // 불러온 데이터를 콘솔에 출력해 확인
                 setDateInfo({
-                    date: date,
-                    title: data.title || '제목 없음',        // Firebase의 title 필드 사용
-                    keywords: data.tag || '키워드 없음',     // Firebase의 tag 필드를 keywords로 매칭
-                    song: data.song || '추천곡 없음',    // Firebase의 content 필드를 song으로 매칭
-                    emoji: data.emoji || '이모티콘 없음',    // Firebase에 emoji 필드가 없다면 기본값 설정
+                    date: localDate,
+                    title: data.title || '제목 없음',
+                    keywords: data.tag || '입력된 감정 없음',
+                    song: data.song || '추천곡 없음',
+                    emoji: data.emoji || '이모티콘 없음',
                 });
             } else {
-                console.log('해당 날짜의 데이터가 없습니다.');
                 setDateInfo({
-                    date: date,
+                    date: localDate,
                     title: '제목 없음',
-                    keywords: '키워드 없음',
+                    keywords: '입력된 감정 없음',
                     song: '추천곡 없음',
                     emoji: '이모티콘 없음',
                 });
-            }
+            } 
         });
+    }else {
+        Alert.alert('오류', '로그인이 필요합니다.');
+    }
     };
-
+    
+    
 
     // 이모티콘을 선택했을 때 호출
     const selectEmoji = (selectedEmoji) => {
         if (selectedDate) {
+            const safePathDate = selectedDate.replace(/[.]/g, "").replace(/\s/g, "_"); // 점(.) 제거, 공백(_)으로 대체
             // Firebase에서 현재 날짜 데이터 가져오기
-            const dbRef = ref(database, `dateData/${selectedDate}`);
+            const dbRef = ref(database, `dateData/${user.uid}/${safePathDate}`);
             onValue(dbRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const currentData = snapshot.val();

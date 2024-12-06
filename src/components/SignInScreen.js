@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/database'; // Firestore에서 데이터 가져오기
-import { auth, database } from './firebase';
+import { doc, getDoc } from 'firebase/firestore'; // Firestore에서 데이터 가져오기
+import { auth, db } from './firebase';
+import { useUser } from './UserContext';
 
 const SignInScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { setUser } = useUser();
 
     const fetchUserData = async (uid) => {
         try {
-            const docRef = doc(database, 'user_data', uid);
-            const docSnap = await getDoc(docRef);
-
+            const docRef = doc(db, 'users', uid); // Firestore 문서 참조
+            const docSnap = await getDoc(docRef); // Firestore에서 문서 가져오기
+    
             if (docSnap.exists()) {
                 console.log('사용자 데이터:', docSnap.data());
             } else {
@@ -22,7 +24,7 @@ const SignInScreen = ({ navigation }) => {
             console.error('데이터 가져오기 오류:', error.message);
         }
     };
-
+    
     const validateInputs = () => {
         if (!email.trim()) {
             Alert.alert('오류', '이메일을 입력하세요.');
@@ -49,17 +51,37 @@ const SignInScreen = ({ navigation }) => {
 
     const handleSignIn = async () => {
         if (!validateInputs()) return;
-
+    
         try {
             // Firebase 로그인 처리
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user; // 로그인된 사용자 정보
-            Alert.alert('로그인 성공', '환영합니다!');
-
-            // 사용자 데이터 가져오기
-            await fetchUserData(user.uid);
-
-            navigation.navigate('Chart'); // 로그인 후 Chart 화면으로 이동
+            const user = userCredential.user;
+    
+            // Firestore에서 사용자 데이터 가져오기
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                Alert.alert('로그인 성공', `환영합니다, ${userData.name}!`);
+                setUser({ uid: user.uid, name: userData.name, email: userData.email});
+    
+                // Inform 화면으로 사용자 데이터 전달
+                navigation.navigate('Inform', {
+                    name: userData.name,
+                    email: userData.email,
+                });
+        
+                                // 로그인 성공 시 Chart로 이동
+                navigation.reset({
+                    index: 0, // 초기 화면으로 설정
+                    routes: [{ name: 'Chart' }], // Chart 화면을 첫 화면으로 설정
+                });
+                        
+            } else {
+                console.error("Firestore에서 사용자 데이터를 찾을 수 없습니다.");
+                Alert.alert('오류', '사용자 데이터를 찾을 수 없습니다.');
+            }
         } catch (error) {
             let errorMessage = '오류가 발생했습니다.';
             if (error.code === 'auth/user-not-found') {
@@ -70,8 +92,10 @@ const SignInScreen = ({ navigation }) => {
                 errorMessage = '잠시 후 다시 시도하세요.';
             }
             Alert.alert('로그인 실패', errorMessage);
+            console.error('로그인 오류:', error.code, error.message);
         }
     };
+    
 
     return (
         <View style={styles.container}>
